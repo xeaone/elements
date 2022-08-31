@@ -3,7 +3,7 @@
 export default class XToast extends HTMLElement {
 
     static define() {
-        customElements.define('x-dialog', XDialog);
+        customElements.define('x-toast', XToast);
     }
 
     actions = [];
