@@ -1,6 +1,6 @@
 // Copyright Alexander Elias. All rights reserved. MIT license.
 
-class XDialog extends HTMLElement {
+export default class XDialog extends HTMLElement {
 
     static define() {
         customElements.define('x-dialog', XDialog);
