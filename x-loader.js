@@ -9,8 +9,6 @@ export default class XLoader extends HTMLElement {
     #shadow = /*html*/ `
     <style>
         :host {
-            --x-loader-icon-color: rgb(0, 0, 0);
-            --x-loader-background: rgba(0, 0, 0, 0.1);
             top: 0;
             left: 0;
             width: 100%;
@@ -19,7 +17,7 @@ export default class XLoader extends HTMLElement {
             position: absolute;
             align-items: center;
             justify-content: center;
-            background-color: var(--x-loader-background);
+            background-color: var(--x-loader-background, rgba(0, 0, 0, 0.1));
         }
         .x-loader {
             width: 60px;
@@ -34,7 +32,7 @@ export default class XLoader extends HTMLElement {
             position: absolute;
             border-radius: 50%;
             transform: translate(-50%, -50%);
-            border: 3px solid var(--x-loader-icon-color);
+            border: 3px solid var(--x-loader-icon-color, rgb(0, 0, 0));
             animation: x-loader-ripple infinite 900ms cubic-bezier(0, 0.3, 0.9, 1);
         }
         .x-loader div:nth-child(2) {

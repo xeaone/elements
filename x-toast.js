@@ -82,7 +82,6 @@ export default class XToast extends HTMLElement {
     #shadow = /*html*/ `
     <style>
         :host {
-            --x-toast-font-size: 1rem;
             left: 0;
             bottom: 0;
             z-index: 1;
@@ -90,11 +89,10 @@ export default class XToast extends HTMLElement {
             display: block;
             position: fixed;
             overflow: hidden;
-            counter-reset: toast;
             pointer-events: none;
             box-sizing: border-box;
             background: var(--x-toast-host-background);
-            height: calc(var(--x-toast-font-size) + 0.4rem);
+            height: calc(var(--x-toast-font-size, 1rem) + 0.4rem);
         }
         .x-toast {
             width: 100%;
@@ -113,12 +111,12 @@ export default class XToast extends HTMLElement {
         .x-toast-title {
             text-transform: capitalize;
             color: var(--x-toast-color);
-            font-size: var(--x-toast-font-size);
+            font-size: var(--x-toast-font-size, 1rem);
         }
         .x-toast-message {
             text-transform: capitalize;
             color: var(--x-toast-color);
-            font-size: var(--x-toast-font-size);
+            font-size: var(--x-toast-font-size, 1rem);
         }
         .x-toast.active {
             transform: translate(0, 0);
