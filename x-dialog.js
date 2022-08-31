@@ -1,14 +1,16 @@
 // Copyright Alexander Elias. All rights reserved. MIT license.
 
-export default class XDialog extends HTMLElement {
+class XDialog extends HTMLElement {
 
     static define() {
         customElements.define('x-dialog', XDialog);
     }
 
-    #dialog;
+    #no;
+    #yes;
     #form;
     #title;
+    #dialog;
     #message;
 
     #shadow = /*html*/`
@@ -40,12 +42,11 @@ export default class XDialog extends HTMLElement {
         }
     }
 
-    close () {
-        this.#dialog.close()
-        this.#form.reset();
-        this.#title.textContent = '';
-        this.#dialog.returnValue = '';
-        this.#message.textContent = '';
+    close (event) {
+        const value = event.target.value;
+        this.#dialog.returnValue = value;
+        this.#dialog.close();
+        return value;
     }
 
     constructor () {
@@ -54,8 +55,15 @@ export default class XDialog extends HTMLElement {
         this.shadowRoot.innerHTML = this.#shadow;
         this.#form = this.shadowRoot.querySelector('form');
         this.#dialog = this.shadowRoot.querySelector('dialog');
-        this.#title = this.shadowRoot.querySelector('slot[name="title"').assignedNodes()[0];
+    }
+
+    connectedCallback () {
         this.#message = this.shadowRoot.querySelector('slot[name="message"').assignedNodes()[0];
+        this.#title = this.shadowRoot.querySelector('slot[name="title"').assignedNodes()[0];
+        this.#yes = this.shadowRoot.querySelector('slot[name="yes"').assignedNodes()[0];
+        this.#no = this.shadowRoot.querySelector('slot[name="no"').assignedNodes()[0];
+        this.#yes?.addEventListener('click', (event) => this.close(event));
+        this.#no?.addEventListener('click', (event) => this.close(event));
     }
 
 }
