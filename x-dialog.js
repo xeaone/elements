@@ -6,10 +6,15 @@ export default class XDialog extends HTMLElement {
         customElements.define('x-dialog', XDialog);
     }
 
+    result = null;
+
     #no;
     #yes;
     #form;
     #title;
+    #close;
+    #input;
+    #submit;
     #dialog;
     #message;
 
@@ -20,33 +25,74 @@ export default class XDialog extends HTMLElement {
             <slot name="message"></slot>
             <slot name="yes"></slot>
             <slot name="no"></slot>
+            <slot name="input"></slot>
+            <slot name="submit"></slot>
+            <slot name="close"></slot>
         </form>
     </dialog>
     `;
 
-    open (title, message) {
+    #reset () {
+        this.#form.reset();
+        this.#input.value = null;
+        this.#dialog.returnValue = null;
+        this.#title.textContent = '';
+        this.#dialog.returnValue = '';
+        this.#message.textContent = '';
+        this.#no.style.display = 'none';
+        this.#yes.style.display = 'none';
+        this.#close.style.display = 'none';
+        this.#input.style.display = 'none';
+        this.#submit.style.display = 'none';
+    }
+
+    prompt (title, message) {
         if (this.#dialog.hasAttribute('open')) {
             throw new Error('dialog open');
         } else {
-            this.#dialog.showModal();
+            this.result = null;
+            this.#dialog.returnValue = null;
+            this.#input.style.display = null;
+            this.#submit.style.display = null;
             this.#title.textContent = title ?? '';
             this.#message.textContent = message ?? '';
-            return new Promise(resolve => this.#dialog.onclose = () => {
-                const value = this.#dialog.returnValue;
-                this.#form.reset();
-                this.#title.textContent = '';
-                this.#dialog.returnValue = '';
-                this.#message.textContent = '';
-                resolve(value);
-            });
+            this.#dialog.showModal();
+            return new Promise(resolve => this.#dialog.onclose = () => resolve(this.result));
         }
     }
 
-    close (event) {
-        const value = event.target.value;
-        this.#dialog.returnValue = value;
+    question (title, message) {
+        if (this.#dialog.hasAttribute('open')) {
+            throw new Error('dialog open');
+        } else {
+            this.result = null;
+            this.#no.style.display = null;
+            this.#yes.style.display = null;
+            this.#title.textContent = title ?? '';
+            this.#message.textContent = message ?? '';
+            this.#dialog.showModal();
+            return new Promise(resolve => this.#dialog.onclose = () => resolve(this.result));
+        }
+    }
+
+    notify (title, message) {
+        if (this.#dialog.hasAttribute('open')) {
+            throw new Error('dialog open');
+        } else {
+            this.result = null;
+            this.#close.style.display = null;
+            this.#title.textContent = title ?? '';
+            this.#message.textContent = message ?? '';
+            this.#dialog.showModal();
+            return new Promise(resolve => this.#dialog.onclose = () => resolve(this.result));
+        }
+    }
+
+    close (result) {
+        this.result = result;
         this.#dialog.close();
-        return value;
+        this.#reset();
+        return result;
     }
 
     constructor () {
@@ -58,12 +104,22 @@ export default class XDialog extends HTMLElement {
     }
 
     connectedCallback () {
-        this.#message = this.shadowRoot.querySelector('slot[name="message"').assignedNodes()[0];
         this.#title = this.shadowRoot.querySelector('slot[name="title"').assignedNodes()[0];
-        this.#yes = this.shadowRoot.querySelector('slot[name="yes"').assignedNodes()[0];
+        this.#message = this.shadowRoot.querySelector('slot[name="message"').assignedNodes()[0];
+
         this.#no = this.shadowRoot.querySelector('slot[name="no"').assignedNodes()[0];
-        this.#yes?.addEventListener('click', (event) => this.close(event));
-        this.#no?.addEventListener('click', (event) => this.close(event));
+        this.#yes = this.shadowRoot.querySelector('slot[name="yes"').assignedNodes()[0];
+        this.#no?.addEventListener('click', () => this.close(false));
+        this.#yes?.addEventListener('click', () => this.close(true));
+
+        this.#close = this.shadowRoot.querySelector('slot[name="close"').assignedNodes()[0];
+        this.#close?.addEventListener('click', () => this.close());
+
+        this.#input = this.shadowRoot.querySelector('slot[name="input"').assignedNodes()[0];
+        this.#submit = this.shadowRoot.querySelector('slot[name="submit"').assignedNodes()[0];
+        this.#submit?.addEventListener('click', () => this.close(this.#input?.value));
+
+        this.#reset();
     }
 
 }

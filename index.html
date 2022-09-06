@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>X-Elements Examples</title>
+    </head>
+
+    <body>
+
+        <x-dialog>
+            <div slot="title"></div>
+            <div slot="message"></div>
+            <button slot="yes">Yes</button>
+            <button slot="no">No</button>
+            <button slot="close">Close</button>
+            <input slot="input" />
+            <button slot="submit">Submit</button>
+        </x-dialog>
+
+        <script type="module">
+            import XDialog from './x-dialog.js';
+            XDialog.define();
+            window.d = document.querySelector('x-dialog');
+        </script>
+
+        <button onclick="d.notify('title','message').then(console.log);">Notify</button>
+        <button onclick="d.prompt('title','message').then(console.log);">Prompt</button>
+        <button onclick="d.question('title','message').then(console.log);">Question</button>
+
+    </body>
+
+</html>
