@@ -2,6 +2,8 @@
 
 export default class XDialog extends HTMLElement {
 
+    static observedAttributes = [ 'light', 'dark' ];
+
     static define() {
         customElements.define('x-dialog', XDialog);
     }
@@ -19,6 +21,14 @@ export default class XDialog extends HTMLElement {
     #message;
 
     #shadow = /*html*/`
+    <style>
+        :host([light]) dialog::backdrop {
+            background: rgba(0,0,0,0.5);
+        }
+        :host([dark]) dialog::backdrop {
+            background: rgba(255,255,255,0.5);
+        }
+    </style>
     <dialog part="dialog">
         <form part="form" method="dialog">
             <slot name="title"></slot>
